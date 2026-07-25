@@ -1,1 +1,1 @@
-"# realtime-vehicle-tracker" 
+Real-time vehicle location tracking server built with NestJS, WebSockets, Redis, Docker, and NGINX.

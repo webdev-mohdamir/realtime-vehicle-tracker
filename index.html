@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Client</title>
+  </head>
+  <body>
+    <button onclick="sendMessage()">Send</button>
+
+    <!-- show data -->
+    <div id="data"></div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+      const socket = io('http://localhost:3000');
+
+      socket.on('msgToClient', (message) => {
+        console.log('Message from server:', message);
+        const dataDiv = document.getElementById('data');
+        dataDiv.innerHTML += `<p>Device ID: ${message.deviceId}</p><p>Latitude: ${message.lat}</p><p>Longitude: ${message.lng}</p></br>`;
+      });
+
+      const randomDeviceId = `vehicle_${Math.floor(Math.random() * 100)}`;
+
+      function sendMessage() {
+        const randLat = Math.random() * 180 - 90;
+        const randLng = Math.random() * 360 - 180;
+        const payload = { deviceId: randomDeviceId, lat: randLat, lng: randLng };
+
+        socket.emit('msgToServer', payload);
+      }
+    </script>
+  </body>
+</html>
