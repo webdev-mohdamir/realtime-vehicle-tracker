@@ -35,4 +35,8 @@ export class RedisClient {
     public async get(key: string): Promise<string | null> {
         return await this.redis.get(key);
     }
+
+    public async getKeys(pattern: string): Promise<string[]> {
+        return await this.redis.keys(pattern);
+    }
 }

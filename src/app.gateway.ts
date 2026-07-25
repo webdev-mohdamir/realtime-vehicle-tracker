@@ -28,8 +28,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
         this.logger.log(`WebSocket server initialized: ${server}`);
     }
     
-    handleConnection(client: Socket, ...args: Socket[]) {
+    async handleConnection(client: Socket, ...args: Socket[]) {
         this.logger.log(`Client connected: ${client.id}`);
+
+        const redisClient = RedisClient.getInstance();
+        const keys = await redisClient.getKeys('vehicle:*');
+        for (const key of keys) {
+            const vehicleData = await redisClient.get(key);
+            if (vehicleData) {
+                client.emit('msgToClient', JSON.parse(vehicleData));
+            }
+        }
     }
 
     handleDisconnect(client: Socket) {
