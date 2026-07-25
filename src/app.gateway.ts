@@ -1,6 +1,7 @@
 import { Logger } from "@nestjs/common";
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket} from "socket.io";
+import { RedisClient } from "./common/redis";
 
 @WebSocketGateway({
     cors: {
@@ -16,6 +17,10 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     @SubscribeMessage('msgToServer')
     handleMessage(@MessageBody() data: { deviceId: string; lat: number; lng: number }): void {
         this.logger.log(`Received data from device: ${data.deviceId}`);
+        
+        const redisClient = RedisClient.getInstance();
+        redisClient.set(`vehicle:${data.deviceId}`, JSON.stringify(data));
+
         this.server.emit('msgToClient', data);
     }
 
